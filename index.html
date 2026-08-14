@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة ميدو | تعليم القرآن وتثبيت الهوية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Almarai:wght@300;400;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0C2340;
+    --ink-2:#14345C;
+    --paper:#FAF8F5;
+    --paper-2:#F0ECE1;
+    --quran-green:#1E5631;
+    --quran-green-light:#2E7D43;
+    --gold:#D4AF37;
+    --gold-light:#F4D06F;
+    --coral:#D9534F;
+    --text-dark:#1A2530;
+    --text-mute:#5A6B7C;
+    --line:rgba(12,35,64,0.12);
+    --white:#FFFFFF;
+    --display:'Cairo', sans-serif;
+    --body:'Almarai', sans-serif;
+    --mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--body);
+    background:var(--paper);
+    color:var(--text-dark);
+    line-height:1.7;
+    overflow-x:hidden;
+  }
+  img{max-width:100%; display:block;}
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+  .container{max-width:1180px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(250,248,245,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 24px;
+  }
+  .brand{display:flex; align-items:center; gap:12px; font-family:var(--display); font-weight:800; font-size:1.2rem; color:var(--ink); cursor:pointer;}
+  .brand-mark{
+    width:42px; height:42px; border-radius:12px;
+    background:var(--quran-green);
+    color:var(--gold-light);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--display); font-weight:900; font-size:1.1rem;
+    box-shadow:0 3px 0 var(--ink);
+  }
+  .nav-links{display:flex; gap:20px; font-weight:700; font-size:.9rem; align-items:center;}
+  .nav-links button{background:none; border:none; font:inherit; color:var(--ink-2); cursor:pointer;}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:11px 22px; border-radius:999px; font-weight:800; font-size:.92rem;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn-primary{background:var(--quran-green); color:var(--white); box-shadow:0 6px 0 #133820;}
+  .btn-primary:hover{transform:translateY(-2px);}
+  
+  .view-section { display: none; }
+  .view-section.active-view { display: block; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative; background:var(--ink); color:var(--paper); padding:90px 0 70px; overflow:hidden;
+  }
+  .hero-grid{
+    position:relative; z-index:1; display:grid; grid-template-columns:1.1fr .9fr; gap:50px; align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:.78rem;
+    color:var(--gold-light); background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4);
+    padding:7px 14px; border-radius:999px; margin-bottom:22px;
+  }
+  .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--gold-light);}
+  .hero h1{font-family:var(--display); font-weight:900; font-size:clamp(2.1rem, 4.2vw, 3.2rem); line-height:1.3; margin-bottom:20px;}
+  .hero h1 span{color:var(--gold-light);}
+  .hero p.lead{font-size:1.08rem; color:rgba(250,248,245,0.82); max-width:540px; margin-bottom:32px;}
+
+  /* ---------- SECTIONS ---------- */
+  .section{padding:88px 0;}
+  .section-head{max-width:640px; margin-bottom:52px;}
+  .section-tag{font-family:var(--mono); font-size:.78rem; color:var(--quran-green-light); text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px; display:block;}
+  .section-head h2{font-family:var(--display); font-weight:800; font-size:clamp(1.7rem, 3vw, 2.4rem); color:var(--ink); margin-bottom:14px;}
+  
+  .steps-grid{display:grid; grid-template-columns:repeat(4, 1fr); gap:20px; margin-top:30px;}
+  .step-card{background:var(--white); border:1px solid var(--line); border-radius:16px; padding:24px 20px; position:relative;}
+  .step-num{position:absolute; top:-14px; right:20px; background:var(--gold); color:var(--ink); font-family:var(--mono); font-weight:700; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.85rem;}
+  .step-card h3{font-family:var(--display); font-size:1.05rem; margin:10px 0 8px; color:var(--ink);}
+  .step-card p{font-size:.86rem; color:var(--text-mute);}
+
+  /* ---------- DASHBOARD / INTERIOR ---------- */
+  .dashboard-wrapper{max-width:1180px; margin:40px auto; padding:0 24px;}
+  .dash-header{background:var(--ink); color:var(--white); padding:30px; border-radius:20px; display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;}
+  .dash-header h2{font-family:var(--display); font-size:1.8rem; color:var(--gold-light);}
+  
+  .classroom-layout{
+    display:grid; grid-template-columns: 2fr 1fr; gap:24px; background:var(--white); padding:28px; border-radius:20px; border:1px solid var(--line); box-shadow:0 10px 30px rgba(12,35,64,0.06);
+  }
+
+  /* مشغل الفيديو الداخلي المؤمن للمنصة */
+  .platform-player-container {
+    background: #000;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .platform-video-screen {
+    position: relative;
+    padding-bottom: 56.25%; /* نسبة 16:9 */
+    height: 0;
+    background: #111;
+  }
+  .platform-video-screen iframe {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%; border: 0;
+  }
+  .platform-controls-bar {
+    background: #0C2340;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--white);
+  }
+  .player-status-text {
+    font-family: var(--mono);
+    font-size: .85rem;
+    color: var(--gold-light);
+  }
+
+  .playlist-box{display:flex; flex-direction:column; gap:10px;}
+  .lesson-btn{
+    background:var(--paper-2); border:1px solid var(--line); padding:14px; border-radius:12px; text-align:right; font-weight:700; font-size:.9rem; color:var(--ink); transition:all .2s;
+  }
+  .lesson-btn:hover, .lesson-btn.active{background:var(--quran-green); color:var(--white); border-color:var(--quran-green);}
+
+  .interactive-box{
+    margin-top:20px; background:var(--paper-2); padding:20px; border-radius:14px; border:1px solid var(--line);
+  }
+  .audio-tracker{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-top:12px;
+  }
+  .repeat-counter{
+    font-family:var(--mono); font-weight:700; background:var(--ink); color:var(--gold-light); padding:8px 16px; border-radius:8px; font-size:1rem;
+  }
+
+  footer{background:var(--ink); color:rgba(250,248,245,0.7); padding:40px 0 20px; text-align:center; font-size:.85rem; margin-top:60px;}
+
+  @media(max-width:850px){
+    .hero-grid, .steps-grid, .classroom-layout{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav container">
+    <div class="brand" onclick="switchView('home')">
+      <div class="brand-mark">مـ</div>
+      منصة ميدو للقرآن والهوية
+    </div>
+    <nav class="nav-links">
+      <button onclick="switchView('home')">الرئيسية</button>
+      <button onclick="switchView('classroom')">غرفة الحصص الداخلية</button>
+      <button onclick="switchView('parent')">لوحة ولي الأمر</button>
+      <button onclick="switchView('teacher')">لوحة المعلمة</button>
+    </nav>
+    <div>
+      <button class="btn btn-primary" onclick="switchView('classroom')">ابدأ الكورس الآن 🎬</button>
+    </div>
+  </div>
+</header>
+
+<!-- الواجهة الرئيسية -->
+<div id="view-home" class="view-section active-view">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> بيئة عالمية مؤمنة بالكامل</div>
+        <h1>تعلم القرآن بأسلوب تفاعلي<br><span>من داخل منصة ميدو الخاصة</span></h1>
+        <p class="lead">شاهد كيف يعمل محتوى الكورس مباشرة على السحابة بجودة عالية وبدون أي عوائق أو أخطاء تقنية.</p>
+        <div>
+          <button class="btn btn-primary" onclick="switchView('classroom')">دخول غرفة الحصص 🚀</button>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.05); padding:30px; border-radius:20px; border:1px solid rgba(255,255,255,0.1);">
+        <h3 style="font-family:var(--display); color:var(--gold-light); margin-bottom:12px;">مميزات المنصة الآن:</h3>
+        <p style="font-size:.9rem; color:rgba(250,248,245,0.85); line-height:1.7;">
+          ✔ تشغيل نظامي سحابي عبر بروتوكول آمن.<br>
+          ✔ إلغاء أي تسعيرات لتركيز كامل على تجربة الكورس.<br>
+          ✔ تدريبات صوتية وبصرية وجلسات معلمة متكاملة.
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- صفحة الكورس من الداخل -->
+<div id="view-classroom" class="view-section">
+  <div class="dashboard-wrapper">
+    <div class="dash-header">
+      <div>
+        <h2>غرفة الحصص والتدريبات التفاعلية</h2>
+        <p style="color:var(--paper); opacity:0.85;">المسار الحالي: تلاوة وتأسيس نور البيان</p>
+      </div>
+      <button class="btn" style="background:var(--gold); color:var(--ink);" onclick="switchView('home')">الرئيسية</button>
+    </div>
+
+    <div class="classroom-layout">
+      <div>
+        <!-- مشغل المنصة المعتمد -->
+        <div class="platform-player-container">
+          <div class="platform-video-screen">
+            <iframe id="platformVideoFrame" src="https://www.youtube.com/embed/nKmOyfqtoQc?autoplay=0&controls=1&modestbranding=1&rel=0&vq=hd720" allowfullscreen title="مشغل منصة ميدو"></iframe>
+          </div>
+          <div class="platform-controls-bar">
+            <div class="player-status-text" id="playerStatusLabel">جودة الفيديو: 720p تلقائي (يعمل من السحابة)</div>
+          </div>
+        </div>
+
+        <h3 id="currentLessonTitle" style="font-family:var(--display); font-size:1.15rem; margin-top:16px; color:var(--ink);">
+          الدرس الأساسي: الشرح والتلاوة التفاعلية
+        </h3>
+
+        <!-- صندوق التدريب الصوتي والتكرار -->
+        <div class="interactive-box">
+          <h4 style="font-family:var(--display); font-size:1rem; color:var(--ink); margin-bottom:8px;">
+            🎙️ التدريب الصوتي التكراري (ردد خلف الصوت 10 مرات):
+          </h4>
+          <p style="font-size:.88rem; color:var(--text-mute);">استمع إلى نطق الكلمة ورددها بتركيز لضبط مخارج الحروف.</p>
+          <div class="audio-tracker">
+            <button class="btn btn-primary" style="padding:8px 16px; font-size:.85rem;" onclick="alert('جاري تشغيل ملف التدريب الصوتي لتكرار الكلمة...')">🔊 تشغيل صوت الترديد</button>
+            <div class="repeat-counter">المرات المتبقية: <span id="countNum">10</span> / 10</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="playlist-box">
+        <h4 style="font-family:var(--display); font-size:1.05rem; color:var(--ink); margin-bottom:6px;">📚 محتوى وحدات الكورس</h4>
+        
+        <button class="lesson-btn active" onclick="loadPlatformLesson('nKmOyfqtoQc', 'الدرس الأساسي: الشرح والتلاوة التفاعلية', this)">
+          1️⃣ الدرس الأساسي (فيديو المنصة)
+        </button>
+        <button class="lesson-btn" onclick="loadPlatformLesson('9bZkp7q19f0', 'الدرس الثاني: التدريب الصوتي (10 مرات)', this)">
+          2️⃣ الدرس الثاني: التدريب الصوتي والتكرار
+        </button>
+        <button class="lesson-btn" onclick="loadPlatformLesson('3JZ_D3ELwOQ', 'الدرس الثالث: التدريب البصري التفاعلي', this)">
+          3️⃣ الدرس الثالث: التدريب البصري والاختيار
+        </button>
+        <button class="lesson-btn" onclick="loadPlatformLesson('nKmOyfqtoQc', 'الدرس الرابع: جلسة المعلمة الختامية (15 دقيقة)', this)">
+          4️⃣ الدرس الرابع: جلسة المعلمة الفردية
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- لوحة ولي الأمر -->
+<div id="view-parent" class="view-section">
+  <div class="dashboard-wrapper">
+    <div class="dash-header">
+      <div>
+        <h2>لوحة تحكم ولي الأمر</h2>
+        <p style="color:var(--paper); opacity:0.85;">متابعة تقدم طفلك والتدريبات اليومية</p>
+      </div>
+      <button class="btn" style="background:var(--gold); color:var(--ink);" onclick="switchView('home')">الرئيسية</button>
+    </div>
+    <div style="background:var(--white); padding:24px; border-radius:14px; border:1px solid var(--line);">
+      <h4 style="font-family:var(--display); color:var(--ink); margin-bottom:8px;">متابعة استخدام المنصة</h4>
+      <p style="font-weight:700; color:var(--quran-green); font-size:1.1rem;">أتم الطفل الدرس الحالي والتدريب الصوتي بنجاح عبر النظام السحابي.</p>
+    </div>
+  </div>
+</div>
+
+<!-- لوحة المعلمة -->
+<div id="view-teacher" class="view-section">
+  <div class="dashboard-wrapper">
+    <div class="dash-header" style="background:var(--quran-green);">
+      <div>
+        <h2>لوحة تحكم المعلمة</h2>
+        <p style="color:var(--paper); opacity:0.85;">جلسات التأكيد الفردية (15 دقيقة)</p>
+      </div>
+      <button class="btn" style="background:var(--white); color:var(--ink);" onclick="switchView('home')">الرئيسية</button>
+    </div>
+    <div style="background:var(--white); padding:24px; border-radius:14px; border:1px solid var(--line);">
+      <h4 style="font-family:var(--display); margin-bottom:12px;">الطلاب الجاهزون لجلسة الـ 15 دقيقة:</h4>
+      <p style="font-size:.95rem;">• حمزة — تم إنهاء التدريبات الداخلية بنجاح.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>© 2026 منصة ميدو للقرآن والهوية. منصة تعليمية تفاعلية متكاملة.</p>
+  </div>
+</footer>
+
+<script>
+  function switchView(viewName) {
+    document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active-view'));
+    if(viewName === 'home') document.getElementById('view-home').classList.add('active-view');
+    else if(viewName === 'classroom') document.getElementById('view-classroom').classList.add('active-view');
+    else if(viewName === 'parent') document.getElementById('view-parent').classList.add('active-view');
+    else if(viewName === 'teacher') document.getElementById('view-teacher').classList.add('active-view');
+    window.scrollTo(0,0);
+  }
+
+  function loadPlatformLesson(videoId, title, btnElement) {
+    let iframe = document.getElementById('platformVideoFrame');
+    iframe.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&controls=1&modestbranding=1&rel=0&vq=hd720';
+    document.getElementById('currentLessonTitle').innerText = title;
+    document.getElementById('playerStatusLabel').innerText = 'جودة الفيديو: 720p تلقائي (يعمل من السحابة)';
+    
+    document.querySelectorAll('.lesson-btn').forEach(b => b.classList.remove('active'));
+    btnElement.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
