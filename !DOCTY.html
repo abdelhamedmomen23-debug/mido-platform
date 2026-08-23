@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة ميدو | تعليم القرآن الكريم وتثبيت الهوية للجاليات العربية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Almarai:wght@300;400;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A192F;
+    --ink-light:#172A45;
+    --paper:#F8FAFC;
+    --paper-card:#FFFFFF;
+    --quran-green:#0F5132;
+    --quran-green-light:#198754;
+    --gold:#C5A059;
+    --gold-light:#E6C57A;
+    --text-dark:#1E293B;
+    --text-mute:#64748B;
+    --border-color:#E2E8F0;
+    --display:'Cairo', sans-serif;
+    --body:'Almarai', sans-serif;
+    --mono:'JetBrains Mono', monospace;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+    --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.04);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--body);
+    background:var(--paper);
+    color:var(--text-dark);
+    line-height:1.7;
+    overflow-x:hidden;
+  }
+  img{max-width:100%; display:block;}
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+  .container{max-width:1200px; margin:0 auto; padding:0 24px;}
+  ::selection{background:var(--gold); color:var(--ink);}
+
+  a:focus-visible, button:focus-visible, input:focus-visible{
+    outline:2px solid var(--gold); outline-offset:2px;
+  }
+
+  /* ---------- TOAST NOTIFICATIONS ---------- */
+  #toast-container {
+    position: fixed; bottom: 24px; left: 24px; z-index: 10000;
+    display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+  }
+  .toast {
+    background: var(--ink); color: var(--paper-card); padding: 14px 20px;
+    border-radius: 12px; font-family: var(--display); font-weight: 700; font-size: 0.9rem;
+    box-shadow: var(--shadow-lg); border-right: 4px solid var(--gold);
+    pointer-events: auto; animation: slideInToast 0.3s ease forwards;
+    display: flex; align-items: center; gap: 10px; max-width: 320px;
+  }
+  @keyframes slideInToast { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---------- INTRO LOADER ---------- */
+  #intro-overlay {
+    position: fixed; inset: 0; background: var(--ink); z-index: 9999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    animation: fadeOutOverlay 0.5s ease 1.5s forwards;
+  }
+  @keyframes fadeOutOverlay { from { opacity: 1; visibility: visible; } to { opacity: 0; visibility: hidden; pointer-events: none; } }
+
+  .intro-content-wrap { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .intro-circle-container {
+    position: relative; width: 120px; height: 120px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .intro-light-ring {
+    position: absolute; inset: -8px;
+    border: 3px solid transparent;
+    border-top: 3px solid var(--gold);
+    border-left: 3px solid var(--gold);
+    border-radius: 50%;
+    animation: spinLoad 1.5s linear infinite; 
+  }
+  @keyframes spinLoad { to { transform: rotate(360deg); } }
+
+  .intro-photo-wrap {
+    position: relative; width: 100%; height: 100%; border-radius: 50%;
+    padding: 4px; background: var(--paper-card);
+    box-shadow: 0 0 25px rgba(197,160,89,0.4);
+  }
+  .intro-photo-wrap img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+  .intro-text { text-align: center; color: var(--paper-card); }
+  .intro-text h2 { font-family: var(--display); font-size: 1.25rem; color: var(--gold-light); margin-bottom: 6px; }
+  .intro-text p { font-size: 0.82rem; color: rgba(255,255,255,0.7); }
+
+  /* ---------- HEADER & NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border-color);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 24px;
+  }
+  .brand{display:flex; align-items:center; gap:12px; font-family:var(--display); font-weight:800; font-size:1.15rem; color:var(--ink); cursor:pointer;}
+  .brand-mark{
+    width:40px; height:40px; border-radius:12px;
+    background:var(--quran-green);
+    color:var(--gold-light);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--display); font-weight:900; font-size:1.1rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .nav-links{display:flex; gap:20px; font-weight:700; font-size:.92rem; align-items:center;}
+  .nav-links a, .nav-links button{position:relative; padding:6px 0; color:var(--text-dark); background:none; font:inherit; transition:color 0.2s;}
+  .nav-links a:hover, .nav-links button:hover{color:var(--quran-green);}
+  .nav-links a::after, .nav-links button::after{
+    content:''; position:absolute; right:0; bottom:0; width:0; height:2px;
+    background:var(--gold); transition:width .25s ease;
+  }
+  .nav-links a:hover::after, .nav-links button:hover::after{width:100%;}
+  
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:10px 20px; border-radius:12px; font-weight:700; font-size:.9rem;
+    transition:all 0.2s ease; cursor: pointer;
+  }
+  .btn-primary{background:var(--quran-green); color:var(--paper-card); box-shadow: var(--shadow-sm);}
+  .btn-primary:hover{background:var(--quran-green-light); transform:translateY(-1px); box-shadow: var(--shadow-md);}
+  .btn-ghost{background:transparent; color:var(--ink); border:1.5px solid var(--border-color);}
+  .btn-ghost:hover{background:var(--paper); border-color:var(--ink);}
+  .menu-toggle{display:none; background:none; font-size:1.5rem; color:var(--ink);}
+
+  /* ---------- USER PROFILE & WALLET WIDGET IN HEADER ---------- */
+  .user-nav-widget {
+    display: flex; align-items: center; gap: 14px; position: relative;
+  }
+  .wallet-badge {
+    background: rgba(15,81,50,0.1); color: var(--quran-green); border: 1px solid rgba(15,81,50,0.2);
+    padding: 6px 14px; border-radius: 99px; font-family: var(--display); font-weight: 800; font-size: 0.88rem;
+    display: flex; align-items: center; gap: 6px; cursor: pointer; transition: background 0.2s;
+  }
+  .wallet-badge:hover { background: rgba(15,81,50,0.15); }
+  
+  .profile-menu-trigger {
+    width: 42px; height: 42px; border-radius: 50%; overflow: hidden; border: 2px solid var(--gold);
+    cursor: pointer; box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center;
+    background: var(--ink); color: var(--gold-light); font-weight: 800;
+  }
+  .profile-menu-trigger img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Dropdown Menu Style */
+  .profile-dropdown {
+    position: absolute; top: 55px; left: 0; width: 240px; background: var(--paper-card);
+    border-radius: 16px; box-shadow: var(--shadow-lg); border: 1px solid var(--border-color);
+    padding: 10px 0; display: none; z-index: 1000; animation: fadeInView 0.2s ease;
+  }
+  .profile-dropdown.active { display: block; }
+  .dropdown-header-info {
+    padding: 10px 18px; border-bottom: 1px solid var(--border-color); margin-bottom: 6px;
+  }
+  .dropdown-header-info b { display: block; font-family: var(--display); font-size: 0.95rem; color: var(--ink); }
+  .dropdown-header-info span { font-size: 0.78rem; color: var(--text-mute); }
+  
+  .profile-dropdown a, .profile-dropdown button {
+    display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 18px;
+    background: none; border: none; text-align: right; font-family: var(--display); font-weight: 700;
+    font-size: 0.88rem; color: var(--text-dark); cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .profile-dropdown a:hover, .profile-dropdown button:hover {
+    background: rgba(15,81,50,0.06); color: var(--quran-green);
+  }
+  .profile-dropdown hr { border: none; border-top: 1px solid var(--border-color); margin: 6px 0; }
+
+  /* ---------- VIEWS SYSTEM ---------- */
+  .view-section { display: none; }
+  .view-section.active-view { display: block; animation: fadeInView 0.3s ease; }
+  @keyframes fadeInView { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---------- HERO SECTION ---------- */
+  .hero{
+    position:relative;
+    background:var(--ink);
+    color:var(--paper);
+    padding:80px 0 70px;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:'';
+    position:absolute; inset:0;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(15,81,50,0.3), transparent 45%),
+      radial-gradient(circle at 90% 80%, rgba(197,160,89,0.15), transparent 50%);
+    pointer-events:none;
+  }
+  .hero-grid{
+    position:relative; z-index:1;
+    display:grid; grid-template-columns:1.2fr 0.8fr; gap:50px; align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:.78rem; letter-spacing:.05em;
+    color:var(--gold-light); background:rgba(197,160,89,0.12);
+    border:1px solid rgba(197,160,89,0.3);
+    padding:6px 14px; border-radius:999px; margin-bottom:20px;
+  }
+  .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--gold-light);}
+  .hero h1{
+    font-family:var(--display); font-weight:900; font-size:clamp(2.2rem, 4vw, 3.1rem);
+    line-height:1.25; margin-bottom:18px;
+  }
+  .hero h1 span{color:var(--gold-light);}
+  .hero p.lead{
+    font-size:1.05rem; color:rgba(255,255,255,0.8); max-width:540px; margin-bottom:30px;
+  }
+  .hero-actions{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:40px;}
+  .stat-row{display:flex; gap:32px; flex-wrap:wrap;}
+  .stat b{display:block; font-family:var(--display); font-size:1.7rem; font-weight:800; color:var(--paper-card);}
+  .stat span{font-size:.82rem; color:rgba(255,255,255,0.6);}
+
+  .character-visual{position:relative; display:flex; align-items:center; justify-content:center;}
+  .character-card{
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12);
+    border-radius:24px; padding:20px; backdrop-filter:blur(12px);
+    text-align:center; position:relative; width:100%; max-width:300px;
+    box-shadow: var(--shadow-lg);
+  }
+  .character-card img{
+    border-radius:16px; margin-bottom:14px; width:100%; object-fit:cover;
+  }
+  .float-tag{
+    position:absolute; background:var(--paper-card); color:var(--ink);
+    font-family:var(--display); font-weight:700; font-size:.8rem;
+    padding:8px 14px; border-radius:12px; box-shadow: var(--shadow-md);
+    animation:floaty 4s ease-in-out infinite;
+  }
+  .float-tag.t1{top:12%; right:-18%; animation-delay:0s;}
+  .float-tag.t2{bottom:22%; left:-20%; animation-delay:1.5s;}
+  @keyframes floaty{0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);}}
+
+  /* ---------- SECTIONS GENERAL ---------- */
+  .section{padding:80px 0;}
+  .section-head{max-width:600px; margin-bottom:48px;}
+  .section-tag{
+    font-family:var(--mono); font-size:.75rem; color:var(--quran-green-light);
+    text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; display:block; font-weight: 700;
+  }
+  .section-head h2{
+    font-family:var(--display); font-weight:800; font-size:clamp(1.7rem, 2.8vw, 2.2rem);
+    color:var(--text-dark); margin-bottom:12px;
+  }
+  .section-head p{color:var(--text-mute); font-size:1rem;}
+  
+  .section.on-dark{background:var(--ink); color:var(--paper);}
+  .section.on-dark .section-head h2{color:var(--paper-card);}
+  .section.on-dark .section-head p{color:rgba(255,255,255,0.7);}
+
+  /* ---------- FEATURED COURSE BANNER ---------- */
+  .featured-course-banner {
+    background: linear-gradient(135deg, var(--ink), var(--ink-light));
+    border: 2px solid var(--gold);
+    border-radius: 24px;
+    padding: 30px;
+    color: var(--paper-card);
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 30px;
+    align-items: center;
+    margin-bottom: 40px;
+    box-shadow: var(--shadow-lg);
+  }
+  .featured-course-img {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 2px solid rgba(197,160,89,0.3);
+    box-shadow: var(--shadow-md);
+  }
+  .featured-course-img img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  /* ---------- TRACKS ---------- */
+  .tracks-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:24px;}
+  .track-card{
+    background:var(--paper-card); border:1px solid var(--border-color); border-radius:20px;
+    padding:28px 24px; position:relative; transition:all 0.25s ease; box-shadow: var(--shadow-sm);
+  }
+  .track-card:hover{transform:translateY(-6px); box-shadow: var(--shadow-lg); border-color:var(--gold);}
+  .track-card .num{font-family:var(--mono); font-size:.8rem; color:var(--quran-green); font-weight:700;}
+  .track-card .sym{font-family:var(--display); font-weight:900; font-size:1.6rem; color:var(--text-dark); margin:8px 0 4px;}
+  .track-card .name{font-weight:800; font-size:1.05rem; margin-bottom:8px; color:var(--ink);}
+  .track-card .desc{color:var(--text-mute); font-size:.88rem; margin-bottom:20px;}
+  .track-card .meta{
+    display:flex; justify-content:space-between; align-items:center;
+    border-top:1px solid var(--border-color); padding-top:14px; font-size:.82rem;
+  }
+  .track-card .meta b{color:var(--quran-green); font-family:var(--mono);}
+  .track-card button.go{background:none; border:none; color:var(--quran-green); font-weight:800; font-size:.85rem; cursor:pointer;}
+
+  /* ---------- 4-MONTH CURRICULUM TIMELINE SECTION ---------- */
+  .curriculum-timeline {
+    background: var(--paper-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 40px; margin-top: 40px; box-shadow: var(--shadow-sm);
+  }
+  .timeline-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 24px; }
+  .timeline-step {
+    background: var(--paper); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 20px; position: relative;
+    transition: 0.2s; cursor: pointer;
+  }
+  .timeline-step:hover { border-color: var(--gold); background: var(--paper-card); box-shadow: var(--shadow-md); transform: translateY(-3px); }
+  .timeline-month {
+    font-family: var(--mono); font-size: 0.75rem; color: var(--gold); font-weight: 700; background: rgba(197,160,89,0.1);
+    padding: 4px 10px; border-radius: 99px; display: inline-block; margin-bottom: 10px;
+  }
+  .timeline-step h4 { font-family: var(--display); font-size: 1rem; color: var(--ink); margin-bottom: 8px; }
+  .timeline-step p { font-size: 0.82rem; color: var(--text-mute); }
+
+  /* ---------- FEATURES ---------- */
+  .features{display:grid; grid-template-columns:repeat(4,1fr); gap:20px;}
+  .feature-card{
+    background:var(--paper-card); border-radius:20px; padding:28px 20px;
+    border:1px solid var(--border-color); box-shadow: var(--shadow-sm); color: var(--text-dark);
+  }
+  .feature-icon{
+    width:44px; height:44px; border-radius:12px; background:var(--quran-green);
+    color:var(--gold-light); display:flex; align-items:center; justify-content:center;
+    font-family:var(--display); font-weight:700; margin-bottom:16px; font-size:1rem;
+  }
+  .feature-card h3{font-family:var(--display); font-size:1.02rem; margin-bottom:8px; color:var(--ink);}
+  .feature-card p{font-size:.86rem; color:var(--text-mute);}
+
+  /* ---------- MARQUEE STRIP ---------- */
+  .results-strip{background:var(--gold); padding:16px 0; overflow:hidden;}
+  .marquee{display:flex; gap:50px; white-space:nowrap; animation:scroll 25s linear infinite; width:max-content;}
+  .marquee span{font-family:var(--display); font-weight:800; color:var(--ink); font-size:.95rem;}
+  @keyframes scroll{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+
+  /* ---------- FAQ ---------- */
+  .faq-list{max-width:760px;}
+  .faq-item{border-bottom:1px solid var(--border-color); padding:20px 0;}
+  .faq-q{
+    display:flex; justify-content:space-between; align-items:center; gap:16px;
+    font-family:var(--display); font-weight:700; font-size:1rem; color:var(--ink);
+    width:100%; background:none; text-align:right; cursor:pointer;
+  }
+  .faq-q .plus{
+    flex-shrink:0; width:26px; height:26px; border-radius:50%; border:1.5px solid var(--border-color);
+    display:flex; align-items:center; justify-content:center; font-size:.9rem; transition:all 0.2s ease;
+  }
+  .faq-item.open .plus{transform:rotate(45deg); background:var(--quran-green); border-color:var(--quran-green); color:var(--paper-card);}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+  .faq-a p{padding-top:12px; color:var(--text-mute); font-size:.92rem;}
+  .faq-item.open .faq-a{max-height:180px;}
+
+  /* ---------- ONBOARDING WIZARD ---------- */
+  .onboarding-container { max-width: 640px; margin: 40px auto; padding: 0 20px; }
+  .wizard-card {
+    background: var(--paper-card); border-radius: 24px; box-shadow: var(--shadow-lg);
+    padding: 36px; border: 1px solid var(--border-color); position: relative;
+  }
+  .wizard-header {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+    border-bottom: 1px solid var(--border-color); padding-bottom: 20px;
+  }
+  .wizard-avatar {
+    width: 60px; height: 60px; border-radius: 50%; overflow: hidden;
+    border: 2.5px solid var(--gold); flex-shrink: 0; box-shadow: var(--shadow-sm);
+  }
+  .wizard-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .wizard-title h3 { font-family: var(--display); font-size: 1.25rem; color: var(--ink); }
+  .wizard-title p { font-size: 0.82rem; color: var(--text-mute); }
+  
+  .progress-bar-container { background: var(--border-color); height: 6px; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+  .progress-bar-fill { background: var(--quran-green); height: 100%; width: 20%; transition: width 0.3s ease; }
+
+  .step-content { display: none; }
+  .step-content.active-step { display: block; animation: fadeInView 0.3s ease; }
+  .step-content h4 { font-family: var(--display); font-size: 1.2rem; color: var(--ink); margin-bottom: 6px; }
+  .step-content p.hint { font-size: 0.88rem; color: var(--text-mute); margin-bottom: 20px; }
+  
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-family: var(--display); font-weight: 700; font-size: 0.86rem; margin-bottom: 6px; color: var(--ink); }
+  .form-control {
+    width: 100%; padding: 12px 16px; border-radius: 12px; border: 1.5px solid var(--border-color);
+    background: var(--paper); font-family: inherit; font-size: 0.92rem; color: var(--ink); transition: all 0.2s;
+  }
+  .form-control:focus { outline: none; border-color: var(--quran-green); background: var(--paper-card); box-shadow: 0 0 0 3px rgba(15,81,50,0.1); }
+  .phone-input-group { display: flex; gap: 10px; }
+  .phone-input-group select { width: 150px; flex-shrink: 0; }
+
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .option-card {
+    border: 1.5px solid var(--border-color); border-radius: 14px; padding: 14px; text-align: right;
+    background: var(--paper); cursor: pointer; transition: all 0.2s ease;
+    font-family: var(--display); font-weight: 700; color: var(--ink); font-size: 0.9rem;
+  }
+  .option-card:hover { border-color: var(--gold); background: var(--paper-card); }
+  .option-card.selected { border-color: var(--quran-green); background: rgba(15,81,50,0.05); color: var(--quran-green); }
+
+  .wizard-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 20px; }
+  .welcome-choice-box { text-align: center; padding: 10px 0; }
+  .choice-buttons-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 20px; }
+
+  /* ---------- CHECKOUT VIEW (صفحة الدفع الجديدة) ---------- */
+  .checkout-container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+  .checkout-card {
+    background: var(--paper-card); border-radius: 24px; border: 1px solid var(--border-color);
+    padding: 36px; box-shadow: var(--shadow-lg); margin-bottom: 24px;
+  }
+  .checkout-summary-box {
+    background: var(--paper); border: 1px solid var(--border-color); border-radius: 16px;
+    padding: 20px; margin-bottom: 24px;
+  }
+  .checkout-summary-row {
+    display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.92rem;
+  }
+  .checkout-summary-row.total {
+    border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 12px;
+    font-family: var(--display); font-weight: 800; font-size: 1.15rem; color: var(--quran-green);
+  }
+  .payment-methods-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .pay-method-card {
+    border: 1.5px solid var(--border-color); border-radius: 14px; padding: 16px; text-align: center;
+    background: var(--paper); cursor: pointer; font-family: var(--display); font-weight: 700; font-size: 0.9rem;
+    color: var(--ink); transition: 0.2s;
+  }
+  .pay-method-card:hover { border-color: var(--gold); background: var(--paper-card); }
+  .pay-method-card.selected { border-color: var(--quran-green); background: rgba(15,81,50,0.06); color: var(--quran-green); }
+
+  /* ---------- GAMIFICATION XP BAR & AI ASSISTANT WIDGET ---------- */
+  .xp-gamification-card {
+    background: linear-gradient(135deg, var(--quran-green), var(--quran-green-light));
+    color: var(--paper-card);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-md);
+  }
+  .xp-info b { font-family: var(--display); font-size: 1.1rem; color: var(--gold-light); display: block; }
+  .xp-info span { font-size: 0.85rem; opacity: 0.9; }
+  .badge-pill {
+    background: rgba(197, 160, 89, 0.2); border: 1px solid var(--gold);
+    padding: 6px 14px; border-radius: 99px; font-family: var(--display);
+    font-weight: 800; font-size: 0.85rem; color: var(--gold-light);
+  }
+
+  .ai-mido-helper {
+    background: rgba(197, 160, 89, 0.1); border: 1px solid var(--gold);
+    border-radius: 14px; padding: 14px; margin-top: 12px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .ai-mido-helper img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); }
+  .ai-mido-helper div p { font-size: 0.85rem; color: var(--text-dark); font-weight: 700; margin-bottom: 2px; }
+  .ai-mido-helper div span { font-size: 0.78rem; color: var(--text-mute); }
+
+  /* ---------- WALLET, ACCOUNT & SUBSCRIPTIONS VIEWS ---------- */
+  .dashboard-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+  .dash-card-box {
+    background: var(--paper-card); border-radius: 20px; border: 1px solid var(--border-color);
+    padding: 32px; box-shadow: var(--shadow-sm); margin-bottom: 24px;
+  }
+  .dash-card-box h3 {
+    font-family: var(--display); font-size: 1.3rem; color: var(--ink); margin-bottom: 8px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .dash-card-box p { color: var(--text-mute); font-size: 0.92rem; margin-bottom: 20px; }
+  
+  .wallet-balance-card {
+    background: linear-gradient(135deg, var(--ink), var(--ink-light)); color: var(--paper-card);
+    border-radius: 20px; padding: 30px; display: flex; justify-content: space-between; align-items: center;
+    box-shadow: var(--shadow-md); margin-bottom: 24px; position: relative; overflow: hidden;
+  }
+  .wallet-balance-card::after {
+    content: '🪙'; position: absolute; left: -10px; bottom: -20px; font-size: 10rem; opacity: 0.08;
+  }
+  .wallet-balance-card .amount { font-family: var(--display); font-size: 2.5rem; font-weight: 900; color: var(--gold-light); margin-top: 4px; }
+  
+  .transactions-table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+  .transactions-table th, .transactions-table td {
+    padding: 12px 16px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 0.88rem;
+  }
+  .transactions-table th { font-family: var(--display); color: var(--ink); background: var(--paper); font-weight: 700; }
+  .transactions-table td { color: var(--text-dark); }
+  .tx-status-success { color: var(--quran-green); font-weight: 700; background: rgba(15,81,50,0.1); padding: 4px 10px; border-radius: 99px; font-size: 0.78rem; display: inline-block; }
+
+  /* ---------- COURSE PLAYER & DASHBOARD ---------- */
+  .dashboard-wrapper { max-width: 1200px; margin: 40px auto; padding: 0 24px; }
+  .dash-header {
+    background: var(--ink); color: var(--paper-card); padding: 28px 32px; border-radius: 20px;
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; box-shadow: var(--shadow-md);
+  }
+  .dash-header h2 { font-family: var(--display); font-size: 1.6rem; color: var(--gold-light); }
+  .dash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+  .dash-card {
+    background: var(--paper-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px 24px; box-shadow: var(--shadow-sm);
+  }
+  .dash-card h4 { font-family: var(--display); color: var(--ink); margin-bottom: 8px; font-size: 1rem; }
+
+  .accordion-container { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+  .accordion-item {
+    background: var(--paper-card); border: 1px solid var(--border-color); border-radius: 14px; overflow: hidden; transition: border-color 0.2s ease;
+  }
+  .accordion-item.open { border-color: var(--quran-green); }
+  .accordion-header {
+    width: 100%; background: var(--paper); padding: 14px 18px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--display); font-weight: 700; font-size: 0.98rem; color: var(--ink);
+    cursor: pointer; text-align: right; border: none; transition: background 0.2s;
+  }
+  .accordion-header:hover { background: #EDF2F7; }
+  .accordion-icon {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--quran-green); color: var(--gold-light);
+    display: flex; align-items: center; justify-content: center; font-size: 0.85rem; transition: transform 0.3s ease;
+  }
+  .accordion-item.open .accordion-icon { transform: rotate(180deg); background: var(--gold); color: var(--ink); }
+  .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: var(--paper-card); padding: 0 18px; }
+  .accordion-item.open .accordion-body { max-height: 500px; padding: 16px 18px; border-top: 1px solid var(--border-color); }
+  .lesson-action-btn {
+    display: inline-flex; align-items: center; gap: 8px; background: var(--paper); color: var(--ink);
+    padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 0.85rem;
+    margin: 4px 0; transition: all 0.2s; text-decoration: none; border: 1px solid var(--border-color);
+  }
+  .lesson-action-btn:hover { background: var(--quran-green); color: var(--paper-card); border-color: var(--quran-green); }
+
+  /* Interactive Quiz & Audio Repetition Widgets inside Player */
+  .mini-quiz-box, .audio-rep-box {
+    background: rgba(197, 160, 89, 0.08); border: 1px dashed var(--gold); border-radius: 12px; padding: 14px; margin-top: 12px;
+  }
+  .mini-quiz-box h5, .audio-rep-box h5 { font-family: var(--display); font-size: 0.92rem; color: var(--ink); margin-bottom: 8px; }
+  .quiz-options { display: flex; gap: 8px; margin-top: 8px; }
+  .quiz-opt-btn, .audio-rep-btn { background: var(--paper-card); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer; transition: 0.2s; }
+  .quiz-opt-btn:hover, .audio-rep-btn:hover { background: var(--quran-green); color: var(--paper-card); border-color: var(--quran-green); }
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--ink); color:rgba(255,255,255,0.7); padding:50px 0 24px;}
+  .footer-grid{display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; gap:32px; margin-bottom:36px;}
+  .footer-grid h4{color:var(--paper-card); font-family:var(--display); font-size:0.95rem; margin-bottom:14px;}
+  .footer-grid li{margin-bottom:8px; font-size:0.86rem;}
+  .footer-grid li a:hover{color:var(--gold-light);}
+  .footer-bottom{
+    border-top:1px solid rgba(255,255,255,0.1); padding-top:20px;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; font-size:0.8rem;
+  }
+
+  @media (max-width:920px){
+    .hero-grid{grid-template-columns:1fr;}
+    .character-visual{order:-1; margin-bottom:10px;}
+    .featured-course-banner{grid-template-columns:1fr;}
+    .tracks-grid, .timeline-grid{grid-template-columns:repeat(2,1fr);}
+    .features{grid-template-columns:repeat(2,1fr);}
+    .dash-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+    #course-player-box{grid-template-columns:1fr !important;}
+  }
+  @media (max-width:680px){
+    .nav-links{display:none;}
+    .menu-toggle{display:block;}
+    .tracks-grid, .timeline-grid{grid-template-columns:1fr;}
+    .features{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+    .options-grid{grid-template-columns:1fr;}
+    .payment-methods-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- ---------- INTRO LOADER ---------- -->
+<div id="intro-overlay">
+  <div class="intro-content-wrap">
+      <div class="intro-circle-container">
+        <div class="intro-light-ring"></div>
+        <div class="intro-photo-wrap">
+          <img src="Make_image_quality_8k_2K_202608160558.jpeg" alt="شخصية ميدو">
+        </div>
+      </div>
+      <div class="intro-text">
+          <h2>منصة ميدو للقرآن والهوية</h2>
+          <p>جاري تحميل المنصة...</p>
+      </div>
+  </div>
+</div>
+
+<!-- ---------- HEADER ---------- -->
+<header>
+  <div class="nav container">
+    <div class="brand" onclick="switchView('home')">
+      <div class="brand-mark">مـ</div>
+      منصة ميدو
+    </div>
+    <nav class="nav-links">
+      <a href="#tracks" onclick="switchView('home')">الرئيسية</a>
+      <button onclick="switchView('onboarding')">التسجيل والإنضمام</button>
+      <button onclick="switchView('parent')">محتوى الدروس</button>
+      <button onclick="switchView('checkout')" style="color:var(--quran-green); font-weight:800;">💳 صفحة الدفع والاشتراك</button>
+    </nav>
+    
+    <!-- User Profile & Wallet Menu Widget -->
+    <div class="user-nav-widget">
+      <div class="wallet-badge" onclick="switchView('wallet')">
+        <span>🪙</span> <span id="headerBalance">150 جنيه</span>
+      </div>
+      <div class="profile-menu-trigger" onclick="toggleProfileMenu(event)" title="حسابي">
+        <img src="Make_image_quality_8k_2K_202608160558.jpeg" alt="ولي الأمر">
+      </div>
+      
+      <!-- Dropdown Popup Menu -->
+      <div class="profile-dropdown" id="profileDropdown">
+        <div class="dropdown-header-info">
+          <b id="dropdownParentName">أهلاً عبدالحميد مؤمن عبدالحميد احمد</b>
+          <span id="dropdownChildSubtitle">ولي أمر البطل حمزة</span>
+        </div>
+        <button onclick="switchView('home')">🏠 الصفحة الرئيسية</button>
+        <button onclick="switchView('account')">👤 حسابي</button>
+        <button onclick="switchView('wallet')">🪙 محفظتي</button>
+        <button onclick="switchView('checkout')">💳 صفحة الدفع والاشتراك</button>
+        <button onclick="switchView('subscriptions')">📚 إشتراكاتي</button>
+        <hr>
+        <button onclick="handleLogout()" style="color:#DC2626;">🚪 تسجيل خروج</button>
+      </div>
+    </div>
+
+    <button class="menu-toggle" aria-label="فتح القائمة">☰</button>
+  </div>
+</header>
+
+<!-- ---------- HOME VIEW ---------- -->
+<div id="view-home" class="view-section active-view">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> مصمم خصيصاً للجاليات العربية في الغرب</div>
+        <h1>علم أطفالك القرآن الكريم<br><span>برفق وابتكار مع "ميدو"</span></h1>
+        <p class="lead">نرافق أطفالك خطوة بخطوة لتعلم قراءة وتجويد القرآن الكريم، وحفظ كتاب الله، وتثبيت اللغة العربية ببيئة تفاعلية ومواعيد مرنة[cite: 2].</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="switchView('checkout')">اشترك الآن (تجربة صفحة الدفع 💳)</button>
+          <button class="btn btn-ghost" style="color:var(--paper); border-color:rgba(255,255,255,0.3);" onclick="switchView('parent')">استعراض المحتوى</button>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><b>+1,500</b><span>عائلة عربية في المهجر</span></div>
+          <div class="stat"><b>فروق التوقيت</b><span>مواعيد مرنة متوافقة</span></div>
+          <div class="stat"><b>100%</b><span>تفاعل ممتع للصغار</span></div>
+        </div>
+      </div>
+      <div class="character-visual">
+        <div class="character-card">
+          <img src="Make_image_quality_8k_2K_202608160558.jpeg" alt="شخصية ميدو الكرتونية">
+          <p style="font-family:var(--display); font-weight:700; color:var(--paper-card); font-size:.92rem;">"أهلاً بكم.. أنا ميدو، صديقكم لتعلم القرآن واللغة!"</p>
+        </div>
+        <div class="float-tag t1">📖 نور البيان والتجويد</div>
+        <div class="float-tag t2">⭐ أساسيات 1448 هـ</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="tracks">
+    <div class="container">
+      
+      <!-- Featured Course Banner -->
+      <div class="featured-course-banner">
+        <div>
+          <span class="section-tag" style="color:var(--gold-light);">// الدورة المميزة والحصرية</span>
+          <h2 style="font-family:var(--display); font-size:1.8rem; margin-bottom:12px; color:var(--paper-card);">أساسيات دورة حفظ القرآن وتَعْلُّم اللّغة العربية</h2>
+          <p style="color:rgba(255,255,255,0.8); font-size:0.95rem; margin-bottom:20px;">ابدأ الآن مع البطل ميدو رحلة البناء والتأسيس الحقيقي من الصفر بطريقة تفاعلية وممتعة (إصدار عام 1448 هـ).</p>
+          <button class="btn" style="background:var(--gold); color:var(--ink);" onclick="switchView('checkout')">انتقل لصفحة الدفع والاشتراك 💳</button>
+        </div>
+        <div class="featured-course-img">
+          <img src="Make_image_quality_8k_2K_202608160558.jpeg" alt="دورة حفظ القرآن وتَعْلُّم اللّغة العربية">
+        </div>
+      </div>
+
+      <div class="section-head">
+        <span class="section-tag">// المسارات التعليمية</span>
+        <h2>اختر المسار المناسب لطفلك</h2>
+        <p>برامج مصممة خصيصاً لتناسب أطفال الجاليات العربية والذين ينشأون في الدول الغربية لتسهيل نطق الحروف وتدبر القرآن[cite: 2].</p>
+      </div>
+      <div class="tracks-grid">
+        <div class="track-card">
+          <span class="num">المسار 01</span>
+          <div class="sym">نور البيان</div>
+          <div class="name">تأسيس الحروف والقراءة</div>
+          <div class="desc">تعلم مخارج الحروف الصحيحة، القراءة، والكتابة العربية للأطفال من الصفر.</div>
+          <div class="meta"><span>للأعمار 4 - 8 سنوات</span><button class="go" onclick="switchView('checkout')">اشترك الآن ←</button></div>
+        </div>
+        <div class="track-card">
+          <span class="num">المسار 02</span>
+          <div class="sym">الحفظ الميسر</div>
+          <div class="name">جزء عمّ والقصار</div>
+          <div class="desc">تحفيظ القرآن الكريم بطرق تفاعلية مبسطة مع ربط الآيات بالمعاني القيمية للأطفال.</div>
+          <div class="meta"><span>متابعة فردية</span><button class="go" onclick="switchView('checkout')">اشترك الآن ←</button></div>
+        </div>
+        <div class="track-card">
+          <span class="num">المسار 03</span>
+          <div class="sym">أحكام التجويد</div>
+          <div class="name">التلاوة الصحيحة للصغار</div>
+          <div class="desc">إتقان أحكام التجويد المبسطة والتلاوة الصحيحة بأسلوب شيق ومحبب للأطفال واليافعين.</div>
+          <div class="meta"><span>شهادات إنجاز</span><button class="go" onclick="switchView('checkout')">اشترك الآن ←</button></div>
+        </div>
+      </div>
+
+      <!-- 4-Month Curriculum Roadmap Integration -->
+      <div class="curriculum-timeline">
+        <span class="section-tag">// خارطة الطريق التفاعلية</span>
+        <h3 style="font-family:var(--display); font-size:1.4rem; color:var(--ink); margin-bottom:6px;">المنهج الدراسي التفاعلي (4 أشهر)</h3>
+        <p style="color:var(--text-mute); font-size:0.92rem;">انقر على أي شهر لاستعراض تفاصيل مهام البطل ميدو:</p>
+        
+        <div class="timeline-grid">
+          <div class="timeline-step" onclick="showToast('الشهر الأول: جاري تحميل تدريبات مخارج الحروف الأساسية...')">
+            <span class="timeline-month">الشهر الأول</span>
+            <h4>تأسيس الحروف والمخارج</h4>
+            <p>إتقان مخارج الحروف الهجائية عبر تدريبات الصوت وتطبيق نور البيان.</p>
+          </div>
+          <div class="timeline-step" onclick="showToast('الشهر الثاني: جاري تحميل ورش عمل الحركات القصيرة...')">
+            <span class="timeline-month">الشهر الثاني</span>
+            <h4>الحركات والتشكيل</h4>
+            <p>الفتح، الكسر، الضم، والمدود مع تمارين الاستماع والتكرار الصوتي.</p>
+          </div>
+          <div class="timeline-step" onclick="showToast('الشهر الثالث: جاري تحميل مسار سور جزء عمّ...')">
+            <span class="timeline-month">الشهر الثالث</span>
+            <h4>بداية جزء عمّ</h4>
+            <p>حفظ سور الناس إلى الإخلاص مع تدبر المعاني وقصص السور المبسطة.</p>
+          </div>
+          <div class="timeline-step" onclick="showToast('الشهر الرابع: جاري إعداد تقييم التلاوة وشهادة الإنجاز...')">
+            <span class="timeline-month">الشهر الرابع</span>
+            <h4>التلاوة والتقييم النهائي</h4>
+            <p>ربط السور، مراجعة الأحكام، وتسليم شهادة إنجاز البطل الصغير.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section on Dark Background -->
+  <section class="section on-dark" id="features">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-tag" style="color:var(--gold-light);">// مميزات المنصة لأسر في الغرب</span>
+        <h2>حلول ذكية تناسب ظروف اغترابكم</h2>
+        <p>ندرك تحديات تربية النشء وتعليم العربية والقرآن في الدول الغربية، وصممنا المنصة لتذليل كل الصعاب[cite: 2].</p>
+      </div>
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon">⏰</div>
+          <h3>مرونة تامة في المواعيد</h3>
+          <p>حصص تتناسب مع جداول المدارس الغربية وتتوافق مع مختلف فروق التوقيت.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>معلمين معتمدين</h3>
+          <p>نخبة من المعلمين المتخصصين في إقراء القرآن الكريم وتعليم غير الناطقين بالعربية.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>متابعة دورية للآباء</h3>
+          <p>تقارير أسبوعية مفصلة تطلع ولي الأمر على مستوى الحفظ والتحسن.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💡</div>
+          <h3>شخصية ميدو التفاعلية</h3>
+          <p>استخدام الكاركتر الكرتوني المحبوب لتحفيز الأطفال وجعل حصص القرآن ممتعة.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="results-strip">
+    <div class="marquee">
+      <span>✨ نجاح مستمر في ربط الأبناء بالقرآن الكريم</span>
+      <span>🌍 نخدم العائلات العربية في أوروبا وأمريكا وكندا</span>
+      <span>⭐ معلمين ومعلمات ذوي خبرة وكفاءة عالية</span>
+      <span>💬 تقييمات ممتازة من أولياء الأمور</span>
+    </div>
+  </div>
+
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-tag">// الأسئلة الشائعة</span>
+        <h2>كل ما تحتاج معرفته عن الانضمام للمنصة</h2>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item open">
+          <button class="faq-q"><span>كيف يتم تحديد المواعيد مع اختلاف فروق التوقيت؟</span><span class="plus">+</span></button>
+          <div class="faq-a"><p>نوفر جداول مرنة للغاية تناسب التوقيت المحلي في مختلف دول أوروبا، أمريكا الشمالية، وكندا.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q"><span>هل الحصص جماعية أم فردية خاصة؟</span><span class="plus">+</span></button>
+          <div class="faq-a"><p>نقدم الخيارين؛ جلسات فردية خاصة تضمن تركيزاً كاملاً، وجلسات تفاعلية مصغرة.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ---------- CHECKOUT & PAYMENT VIEW (صفحة الدفع الجديدة كلياً) ---------- -->
+<div id="view-checkout" class="view-section">
+  <div class="checkout-container">
+    <div class="checkout-card">
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px; border-bottom:1px solid var(--border-color); padding-bottom:20px;">
+        <div style="width:50px; height:50px; border-radius:14px; background:var(--quran-green); color:var(--gold-light); display:flex; align-items:center; justify-content:center; font-size:1.4rem; font-weight:900;">💳</div>
+        <div>
+          <h3 style="font-family:var(--display); font-size:1.3rem; color:var(--ink);">إتمام الاشتراك والدفع الآمن</h3>
+          <p style="font-size:0.85rem; color:var(--text-mute);">أنت على بُعد خطوة واحدة من تفعيل حساب البطل الصغير وحجز الحصص.</p>
+        </div>
+      </div>
+
+      <!-- Order Summary Box -->
+      <div class="checkout-summary-box">
+        <h4 style="font-family:var(--display); font-size:1rem; color:var(--ink); margin-bottom:12px;">📦 ملخص طلب الاشتراك</h4>
+        <div class="checkout-summary-row">
+          <span>الباقة المختارة:</span>
+          <b>مسار الحفظ الميسر - جزء عمّ (شهر أغسطس 1448 هـ)</b>
+        </div>
+        <div class="checkout-summary-row">
+          <span>اسم البطل المسجل:</span>
+          <b id="checkoutChildNamePreview">حمزة (8 سنوات)</b>
+        </div>
+        <div class="checkout-summary-row">
+          <span>ولي الأمر:</span>
+          <b id="checkoutParentNamePreview">عبدالحميد مؤمن عبدالحميد احمد</b>
+        </div>
+        <div class="checkout-summary-row total">
+          <span>المبلغ الإجمالي المطلوب:</span>
+          <span style="color:var(--quran-green);">250 جنيه مصري</span>
+        </div>
+      </div>
+
+      <!-- Payment Methods Selector -->
+      <div style="margin-bottom:20px;">
+        <label style="display:block; font-family:var(--display); font-weight:700; font-size:0.9rem; margin-bottom:10px; color:var(--ink);">اختر طريقة الدفع المناسبة:</label>
+        <div class="payment-methods-grid">
+          <div class="pay-method-card selected" onclick="selectPaymentMethod(this, 'card')">💳 بطاقة بنكية (Visa/MC)</div>
+          <div class="pay-method-card" onclick="selectPaymentMethod(this, 'apple')">🍏 Apple / Google Pay</div>
+          <div class="pay-method-card" onclick="selectPaymentMethod(this, 'wallet')">🪙 رصيد المحفظة (<span id="checkoutWalletBalanceText">150 جنيه</span>)</div>
+        </div>
+      </div>
+
+      <!-- Credit Card Input Fields (Simulated) -->
+      <div id="creditCardFormContainer" style="background:var(--paper); padding:20px; border-radius:16px; border:1px solid var(--border-color); margin-bottom:24px;">
+        <div class="form-group">
+          <label>رقم البطاقة الائتمانية</label>
+          <input type="text" class="form-control" placeholder="4532 •••• •••• 8921" value="4532 8821 9091 1448">
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>تاريخ الانتهاء</label>
+            <input type="text" class="form-control" placeholder="MM/YY" value="08/28">
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>رمز الأمان (CVV)</label>
+            <input type="password" class="form-control" placeholder="123" value="382">
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <button class="btn btn-ghost" onclick="switchView('home')">← إلغاء والعودة</button>
+        <button class="btn btn-primary" style="padding:14px 28px; font-size:1rem;" onclick="processPayment()">تأكيد ودفع 250 جنيه 🚀</button>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <button class="btn btn-ghost" onclick="switchView('home')">← العودة للرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- WALLET VIEW (محفظتي) ---------- -->
+<div id="view-wallet" class="view-section">
+  <div class="dashboard-container">
+    <div class="wallet-balance-card">
+      <div>
+        <p style="color:var(--gold-light); font-size:0.9rem; font-weight:700;">رصيد المحفظة الحالي</p>
+        <div class="amount" id="walletDisplayAmount">150 جنيه</div>
+      </div>
+      <button class="btn" style="background:var(--gold); color:var(--ink);" onclick="rechargeWallet()">+ شحن المحفظة</button>
+    </div>
+
+    <div class="dash-card-box">
+      <h3>🪙 سجل المعاملات المالية</h3>
+      <p>تابع كافة عمليات الشحن والاشتراكات السابقة بكل شفافية.</p>
+      
+      <table class="transactions-table">
+        <thead>
+          <tr>
+            <th>رقم العملية</th>
+            <th>نوع المعاملة</th>
+            <th>المبلغ</th>
+            <th>التاريخ</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody id="transactionsTableBody">
+          <tr>
+            <td>#TXN-9082</td>
+            <td>شحن رصيد المحفظة (بطاقة بنكية)</td>
+            <td>+200 جنيه</td>
+            <td>12/08/2026</td>
+            <td><span class="tx-status-success">مكتملة</span></td>
+          </tr>
+          <tr>
+            <td>#TXN-8841</td>
+            <td>اشتراك مسار الحفظ الميسر (شهر أغسطس)</td>
+            <td>-50 جنيه</td>
+            <td>01/08/2026</td>
+            <td><span class="tx-status-success">مكتملة</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="text-align:center;">
+      <button class="btn btn-ghost" onclick="switchView('home')">← العودة للرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- ACCOUNT VIEW (حسابي) ---------- -->
+<div id="view-account" class="view-section">
+  <div class="dashboard-container">
+    <div class="dash-card-box">
+      <h3>👤 بيانات الحساب الشخصي</h3>
+      <p>إدارة بيانات ولي الأمر والبطل المسجل في المنصة.</p>
+      
+      <div class="form-group">
+        <label>اسم ولي الأمر الثلاثي</label>
+        <input type="text" id="accountParentNameInput" class="form-control" value="عبدالحميد مؤمن عبدالحميد احمد">
+      </div>
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="accountEmailInput" class="form-control" value="abdelhameed@example.com">
+      </div>
+      <div class="form-group">
+        <label>اسم البطل المسجل</label>
+        <input type="text" id="accountChildNameInput" class="form-control" value="حمزة (8 سنوات)">
+      </div>
+      <button class="btn btn-primary" onclick="saveAccountChanges()">حفظ التعديلات</button>
+    </div>
+    <div style="text-align:center;">
+      <button class="btn btn-ghost" onclick="switchView('home')">← العودة للرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- SUBSCRIPTIONS VIEW (إشتراكاتي) ---------- -->
+<div id="view-subscriptions" class="view-section">
+  <div class="dashboard-container">
+    <div class="dash-card-box">
+      <h3>📚 باقاتي واشتراكاتي النشطة</h3>
+      <p>استعرض تفاصيل الكورسات والمسارات المشترك بها حالياً.</p>
+      
+      <div style="background:var(--paper); border:1px solid var(--border-color); border-radius:14px; padding:20px; display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <div>
+          <h4 style="font-family:var(--display); color:var(--ink); font-size:1.05rem; margin-bottom:4px;" id="subTrackName">مسار الحفظ الميسر - جزء عمّ</h4>
+          <p style="font-size:0.85rem; color:var(--text-mute);">ساري حتى تاريخ: 01/09/2026</p>
+        </div>
+        <span class="tx-status-success">نشط حالياً</span>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <button class="btn btn-ghost" onclick="switchView('home')">← العودة للرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- ONBOARDING WIZARD VIEW ---------- -->
+<div id="view-onboarding" class="view-section">
+  <div class="onboarding-container">
+    <div class="wizard-card">
+      <div class="wizard-header">
+        <div class="wizard-avatar">
+          <img src="Make_image_quality_8k_2K_202608160558.jpeg" alt="ميدو">
+        </div>
+        <div class="wizard-title">
+          <h3>أهلاً بك مع صديق طفلك ميدو 🌟</h3>
+          <p>بوابة الانضمام الذكية لتعليم القرآن الكريم وتثبيت الهوية.</p>
+        </div>
+      </div>
+
+      <!-- Welcome Choice -->
+      <div class="step-content active-step" id="step-welcome">
+        <div class="welcome-choice-box">
+          <h4 style="font-family:var(--display); font-size:1.25rem; color:var(--ink); margin-bottom:10px;">كيف تود المتابعة معنا اليوم؟</h4>
+          <p class="hint">اختر ما يناسب حالتك:</p>
+          <div class="choice-buttons-grid">
+            <button class="btn btn-primary" style="padding:14px; font-size:1rem; justify-content:center;" onclick="startNewRegistration()">
+              ✨ أنا ولي أمر جديد (تسجيل طفل جديد)
+            </button>
+            <button class="btn btn-ghost" style="padding:14px; font-size:1rem; justify-content:center; border-color:var(--quran-green); color:var(--quran-green);" onclick="goToLogin()">
+              🔑 لدي حساب مسجل مسبقاً (تسجيل الدخول)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Login Step -->
+      <div class="step-content" id="step-login">
+        <h4>تسجيل الدخول إلى حسابك السابق</h4>
+        <p class="hint">أدخل بريدك الإلكتروني وكلمة المرور الخاصة بك.</p>
+        <div class="form-group">
+          <label>البريد الإلكتروني المسجل</label>
+          <input type="email" id="loginEmail" class="form-control" placeholder="name@example.com">
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="أدخل كلمة المرور">
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+          <button class="btn btn-ghost" onclick="resetToWelcome()">← رجوع</button>
+          <button class="btn btn-primary" onclick="handleLogin()">دخول المنصة 🚀</button>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="progress-bar-container" id="wizardProgressContainer" style="display:none;">
+        <div class="progress-bar-fill" id="wizardProgress" style="width: 20%;"></div>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="step-content" id="step-1">
+        <h4>1. بيانات البطل الصغير</h4>
+        <p class="hint">ما هو اسم طفلك، وكم عمره؟</p>
+        <div class="form-group">
+          <label>اسم الطفل</label>
+          <input type="text" id="regChildName" class="form-control" placeholder="مثال: يوسف أحمد">
+        </div>
+        <div class="form-group">
+          <label>عمر الطفل</label>
+          <select id="regChildAge" class="form-control">
+            <option value="4-6 سنوات">4 - 6 سنوات (تأسيس مبكر)</option>
+            <option value="7-9 سنوات">7 - 9 سنوات (بداية جزء عم)</option>
+            <option value="10 سنوات فأكثر">10 سنوات فأكثر (تجويد وتلاوة)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-content" id="step-2">
+        <h4>2. الاسم المفضل للتنادي به 🎤</h4>
+        <p class="hint">اللقب أو الاسم المفضل لطفلك داخل المنصة:</p>
+        <div class="form-group">
+          <label>الاسم المفضل</label>
+          <input type="text" id="regChildNickname" class="form-control" placeholder="مثال: البطل يوسف، جو...">
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-content" id="step-3">
+        <h4>3. مكان الإقامة</h4>
+        <p class="hint">أين تقيمون حالياً لضمان اختيار أوقات الحصص:</p>
+        <div class="options-grid" id="locationOptions">
+          <div class="option-card" onclick="selectOption(this, 'location', 'أمريكا الشمالية')">🇺🇸 🇨🇦 أمريكا / كندا</div>
+          <div class="option-card" onclick="selectOption(this, 'location', 'أوروبا')">🇪🇺 أوروبا</div>
+          <div class="option-card" onclick="selectOption(this, 'location', 'الخليج العربي')">🇸🇦 دول الخليج العربي</div>
+          <div class="option-card" onclick="selectOption(this, 'location', 'دولة أخرى')">🌍 دولة أخرى</div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step-content" id="step-4">
+        <h4>4. الهدف التعليمي الأساسي</h4>
+        <p class="hint">التركيز الأساسي لطفلك معنا:</p>
+        <div class="options-grid" id="goalOptions">
+          <div class="option-card" onclick="selectOption(this, 'goal', 'نور البيان')">📖 تأسيس الحروف وقراءة نور البيان</div>
+          <div class="option-card" onclick="selectOption(this, 'goal', 'جزء عم')">⭐ حفظ جزء عم وتثبيته</div>
+          <div class="option-card" onclick="selectOption(this, 'goal', 'التجويد')">🎙️ إتقان التجويد والتلاوة</div>
+          <div class="option-card" onclick="selectOption(this, 'goal', 'شامل')">🏆 الباقة الشاملة المتكاملة</div>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="step-content" id="step-5">
+        <h4>5. بيانات التواصل والحساب</h4>
+        <p class="hint">أدخل بريدك وكلمة مرور آمنة لحفظ حسابك.</p>
+        <div class="form-group">
+          <label>اسم ولي الأمر</label>
+          <input type="text" id="regParentName" class="form-control" placeholder="مثال: أم يوسف">
+        </div>
+        <div class="form-group">
+          <label>البريد الإلكتروني</label>
+          <input type="email" id="regParentEmail" class="form-control" placeholder="name@example.com">
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور</label>
+          <input type="password" id="regParentPassword" class="form-control" placeholder="كلمة مرور قوية">
+        </div>
+        <div class="form-group">
+          <label>رقم واتساب التواصل</label>
+          <div class="phone-input-group">
+            <select id="countryCode" class="form-control">
+              <option value="+1">+1 (أمريكا/كندا)</option>
+              <option value="+44">+44 (بريطانيا)</option>
+              <option value="+49">+49 (ألمانيا)</option>
+              <option value="+966">+966 (السعودية)</option>
+              <option value="+20">+20 (مصر)</option>
+            </select>
+            <input type="text" id="phoneNumber" class="form-control" placeholder="رقم الهاتف">
+          </div>
+        </div>
+      </div>
+
+      <!-- Wizard Footer -->
+      <div class="wizard-footer" id="wizardFooter" style="display:none;">
+        <button class="btn btn-ghost" id="prevBtn" onclick="nextStep(-1)">السابق</button>
+        <button class="btn btn-primary" id="nextBtn" onclick="nextStep(1)">التالي ←</button>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:20px;">
+      <button class="btn btn-ghost" onclick="switchView('home')">← العودة للرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- PARENT & COURSE PLAYER VIEW ---------- -->
+<div id="view-parent" class="view-section">
+  <div class="dashboard-wrapper">
+    <div class="dash-header">
+      <div>
+        <h2>محتوى الحصص والدروس</h2>
+        <p style="color:var(--paper); opacity:0.8; font-size:0.9rem;">مرحباً بك في منصة ميدو التعليمية الميسرة 🌟</p>
+      </div>
+      <button class="btn" style="background:var(--gold); color:var(--ink);" onclick="switchView('home')">الرئيسية</button>
+    </div>
+
+    <!-- Gamification XP & Badges Bar -->
+    <div class="xp-gamification-card">
+      <div class="xp-info">
+        <b>⭐ إنجازات البطل الصغير</b>
+        <span>نقاط التفاعل الحالية: <span id="xpPointsDisplay">450</span> XP (أنت في المستوى الذهبي!)</span>
+      </div>
+      <div class="badge-pill">🏅 وسام الحافظ الصغير</div>
+    </div>
+    
+    <div class="dash-grid">
+      <div class="dash-card">
+        <h4>البطل المسجل</h4>
+        <p style="font-weight:700; font-size:1.1rem; color:var(--quran-green);" id="dashChildDisplay">حمزة (8 سنوات)</p>
+        <p style="font-size:0.82rem; color:var(--text-mute); margin-top:4px;" id="dashTrackDisplay">المسار: الحفظ الميسر</p>
+      </div>
+      <div class="dash-card">
+        <h4>الحصة المباشرة القادمة</h4>
+        <p style="font-weight:700; font-size:1rem; color:var(--ink);">السبت، 4:00 عصراً</p>
+        <button class="btn btn-primary" style="margin-top:10px; padding:5px 12px; font-size:0.8rem;" onclick="document.getElementById('course-player-box').scrollIntoView({behavior: 'smooth'})">الانضمام</button>
+      </div>
+      <div class="dash-card">
+        <h4>حالة المحتوى</h4>
+        <p style="font-weight:700; font-size:1rem; color:var(--gold);">مفتوح بالكامل 🔓</p>
+        <p style="font-size:0.82rem; color:var(--text-mute); margin-top:4px;">استمتع بكل الدروس</p>
+      </div>
+    </div>
+
+    <div id="course-player-box" style="display: grid; grid-template-columns: 1.8fr 1fr; gap: 24px; background: var(--paper-card); padding: 24px; border-radius: 20px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+      <div>
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 14px; background: #000; box-shadow: var(--shadow-sm);">
+          <iframe id="courseVideoPlayer" src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                  allowfullscreen 
+                  title="مشغل الحصص التعليمية">
+          </iframe>
+        </div>
+        <h3 id="videoTitle" style="font-family: var(--display); font-size: 1.1rem; margin-top: 14px; color: var(--ink);">
+          الدرس الأول: تأسيس مخارج الحروف العربية
+        </h3>
+
+        <!-- AI Mido Companion Widget -->
+        <div class="ai-mido-helper">
+          <img src="Make_image_quality_8k_2K_202608160558.jpeg" alt="ميدو الذكي">
+          <div>
+            <p>ميدو يقول لك:</p>
+            <span>"أحسنت المشاهدة يا بطل! هل رددت خلف المعلم؟ اضغط على زر تمرين الت صوت واكسب نقاط XP إضافية!"</span>
+          </div>
+        </div>
+
+        <!-- Interactive Quiz Section for Kids -->
+        <div class="mini-quiz-box">
+          <h5>⭐ تحدي ميدو السريع: أي الحروف التالية هو حرف "ب"؟</h5>
+          <div class="quiz-options">
+            <button class="quiz-opt-btn" onclick="checkQuiz(false, this)">أ</button>
+            <button class="quiz-opt-btn" onclick="checkQuiz(true, this)">ب</button>
+            <button class="quiz-opt-btn" onclick="checkQuiz(false, this)">ت</button>
+          </div>
+        </div>
+
+        <!-- Audio Repetition Exercise Widget -->
+        <div class="audio-rep-box">
+          <h5>🎧 تمرين التكرار الصوتي مع ميدو: ردد خلف الشيخ</h5>
+          <div class="quiz-options">
+            <button class="audio-rep-btn" onclick="playAudioRep('بِسمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ')">🔊 استمع وردد</button>
+            <button class="audio-rep-btn" onclick="showToast('🎤 تم تسجيل محاولتك الصوتية بنجاح! تم إضافة +50 XP')">🎙️ سجل صوتك</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Accordion lessons -->
+      <div>
+        <h4 style="font-family: var(--display); font-size: 1rem; color: var(--ink); margin-bottom: 12px;">
+          📚 قائمة مغامرات ميدو التعليمية
+        </h4>
+        
+        <div class="accordion-container">
+          <div class="accordion-item open">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+              <span>مغامرة 1: مخارج الحروف 🎈</span>
+              <div class="accordion-icon">▼</div>
+            </button>
+            <div class="accordion-body">
+              <button onclick="changeVideo('dQw4w9WgXcQ', 'الدرس الأول: تأسيس مخارج الحروف العربية')" class="lesson-action-btn">
+                🎬 شاهد فيديو ميدو
+              </button>
+              <a href="#" onclick="showToast('🎨 جاري تحميل ورقة التلوين والتدريب PDF'); return false;" class="lesson-action-btn" style="background: rgba(197,160,89,0.1);">
+                🎨 ورقة التلوين والتدريب PDF
+              </a>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+              <span>مغامرة 2: الحركات القصيرة ⭐</span>
+              <div class="accordion-icon">▼</div>
+            </button>
+            <div class="accordion-body">
+              <button onclick="changeVideo('9bZkp7q19f0', 'الدرس الثاني: الحركات القصيرة (الفتح والكسر والضم)')" class="lesson-action-btn">
+                🎬 شاهد فيديو ميدو
+              </button>
+              <a href="#" onclick="showToast('🎨 جاري تحميل نشاط الحركات القصيرة PDF'); return false;" class="lesson-action-btn" style="background: rgba(197,160,89,0.1);">
+                🎨 نشاط الحركات القصيرة PDF
+              </a>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+              <span>مغامرة 3: تلاوة جزء عمّ 📖</span>
+              <div class="accordion-icon">▼</div>
+            </button>
+            <div class="accordion-body">
+              <button onclick="changeVideo('3JZ_D3ELwOQ', 'الدرس الثالث: تلاوة جزء عم وترتيل قصار السور')" class="lesson-action-btn">
+                🎬 شاهد فيديو ميدو
+              </button>
+              <a href="#" onclick="showToast('📖 جاري تحميل كتيب التلاوة اليومية PDF'); return false;" class="lesson-action-btn" style="background: rgba(197,160,89,0.1);">
+                📖 كتيب التلاوة اليومية PDF
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- ADMIN VIEW ---------- -->
+<div id="view-admin" class="view-section">
+  <div class="dashboard-wrapper">
+    <div class="dash-header" style="background:var(--gold); color:var(--ink);">
+      <div>
+        <h2 style="color:var(--ink);">⚙️ لوحة تحكم الإدارة</h2>
+        <p style="color:var(--ink); opacity:0.85; font-size:0.9rem;">إدارة المحتوى والمستخدمين</p>
+      </div>
+      <button class="btn" style="background:var(--ink); color:var(--paper-card);" onclick="switchView('home')">الرئيسية</button>
+    </div>
+    <div class="dash-grid">
+      <div class="dash-card">
+        <h4>حالة المنصة</h4>
+        <p style="font-weight:800; font-size:1.3rem; color:var(--quran-green);">محتوى مفتوح بالكامل</p>
+      </div>
+      <div class="dash-card">
+        <h4>الطلاب المستفيدين</h4>
+        <p style="font-weight:800; font-size:1.5rem; color:var(--ink);">+1,500 طفل</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- FOOTER ---------- -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="brand" style="color:var(--paper-card); margin-bottom:12px;" onclick="switchView('home')">
+          <div class="brand-mark">مـ</div>
+          منصة ميدو
+        </div>
+        <p style="font-size:0.85rem; max-width:280px; color:rgba(255,255,255,0.7);">منصة تعليمية تربط أبناء الجاليات العربية في الدول الغربية بكتاب الله واللغة العربية.</p>
+      </div>
+      <div>
+        <h4>المسارات</h4>
+        <ul>
+          <li><a href="#tracks" onclick="switchView('home')">نور البيان</a></li>
+          <li><a href="#tracks" onclick="switchView('home')">الحفظ الميسر</a></li>
+          <li><a href="#tracks" onclick="switchView('home')">أحكام التجويد</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>روابط سريعة</h4>
+        <ul>
+          <li><button style="background:none; border:none; color:inherit; cursor:pointer;" onclick="switchView('parent')">استعراض الدروس</button></li>
+          <li><button style="background:none; border:none; color:inherit; cursor:pointer;" onclick="switchView('checkout')">صفحة الدفع</button></li>
+          <li><a href="#faq">الأسئلة الشائعة</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>تواصل معنا</h4>
+        <ul>
+          <li><a href="#">دعم المهجر</a></li>
+          <li><a href="#">واتساب الدعم</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 منصة ميدو. جميع الحقوق محفوظة.</span>
+      <span>
+        <a href="javascript:void(0);" onclick="openAdminPortal()" style="color:rgba(255,255,255,0.3); font-size:0.75rem; text-decoration:underline;">إدارة النظام</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // State Management with LocalStorage
+  let appState = {
+    parentName: localStorage.getItem('mido_parentName') || "عبدالحميد مؤمن عبدالحميد احمد",
+    childName: localStorage.getItem('mido_childName') || "حمزة",
+    childAge: localStorage.getItem('mido_childAge') || "8 سنوات",
+    email: localStorage.getItem('mido_email') || "abdelhameed@example.com",
+    walletBalance: parseInt(localStorage.getItem('mido_wallet')) || 150,
+    xpPoints: parseInt(localStorage.getItem('mido_xp')) || 450,
+    selectedLocation: '',
+    selectedGoal: 'الحفظ الميسر'
+  };
+
+  let currentStep = 1;
+  const totalSteps = 5;
+
+  // Initialize UI on load
+  window.addEventListener('DOMContentLoaded', () => {
+    updateUIState();
+  });
+
+  function updateUIState() {
+    document.getElementById('headerBalance').innerText = appState.walletBalance + " جنيه";
+    document.getElementById('walletDisplayAmount').innerText = appState.walletBalance + " جنيه";
+    document.getElementById('checkoutWalletBalanceText').innerText = appState.walletBalance + " جنيه";
+    document.getElementById('dropdownParentName').innerText = "أهلاً " + appState.parentName;
+    document.getElementById('dropdownChildSubtitle').innerText = "ولي أمر البطل " + appState.childName;
+    document.getElementById('dashChildDisplay').innerText = appState.childName + " (" + appState.childAge + ")";
+    document.getElementById('dashTrackDisplay').innerText = "المسار: " + appState.selectedGoal;
+    document.getElementById('subTrackName').innerText = "مسار " + appState.selectedGoal;
+    document.getElementById('xpPointsDisplay').innerText = appState.xpPoints;
+    
+    // Account & Checkout Previews
+    document.getElementById('accountParentNameInput').value = appState.parentName;
+    document.getElementById('accountEmailInput').value = appState.email;
+    document.getElementById('accountChildNameInput').value = appState.childName + " (" + appState.childAge + ")";
+    
+    if(document.getElementById('checkoutChildNamePreview')) {
+      document.getElementById('checkoutChildNamePreview').innerText = appState.childName + " (" + appState.childAge + ")";
+      document.getElementById('checkoutParentNamePreview').innerText = appState.parentName;
+    }
+  }
+
+  function showToast(message) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<span>🔔</span> <span>${message}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.animation = 'slideInToast 0.3s ease reverse forwards';
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  function switchView(viewName) {
+    document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active-view'));
+    document.getElementById('view-' + viewName).classList.add('active-view');
+    document.getElementById('profileDropdown').classList.remove('active');
+    window.scrollTo(0,0);
+  }
+
+  function toggleProfileMenu(e) {
+    e.stopPropagation();
+    const dropdown = document.getElementById('profileDropdown');
+    dropdown.classList.toggle('active');
+  }
+
+  window.addEventListener('click', () => {
+    const dropdown = document.getElementById('profileDropdown');
+    if(dropdown) dropdown.classList.remove('active');
+  });
+
+  function selectPaymentMethod(element, method) {
+    document.querySelectorAll('.pay-method-card').forEach(card => card.classList.remove('selected'));
+    element.classList.add('selected');
+    
+    const cardForm = document.getElementById('creditCardFormContainer');
+    if(method === 'card') {
+      cardForm.style.display = 'block';
+    } else {
+      cardForm.style.display = 'none';
+    }
+  }
+
+  function processPayment() {
+    showToast("💳 جاري معالجة عملية الدفع بشكل آمن...");
+    setTimeout(() => {
+      showToast("🎉 تم الدفع بنجاح! تم تفعيل اشتراك البطل وإضافة الفاتورة.");
+      switchView('parent');
+    }, 1500);
+  }
+
+  function rechargeWallet() {
+    const amountStr = prompt("أدخل المبلغ المراد شحنه للمحفظة (بالجنيه):", "100");
+    if(amountStr) {
+      const added = parseInt(amountStr);
+      if(!isNaN(added) && added > 0) {
+        appState.walletBalance += added;
+        localStorage.setItem('mido_wallet', appState.walletBalance);
+        updateUIState();
+        
+        const tbody = document.getElementById('transactionsTableBody');
+        const tr = document.createElement('tr');
+        const today = new Date().toLocaleDateString('en-GB');
+        tr.innerHTML = `<td>#TXN-${Math.floor(1000 + Math.random() * 9000)}</td><td>شحن رصيد المحفظة (بطاقة بنكية)</td><td>+${added} جنيه</td><td>${today}</td><td><span class="tx-status-success">مكتملة</span></td>`;
+        tbody.prepend(tr);
+
+        showToast("تم شحن محفظتك بنجاح بـ " + added + " جنيه!");
+      } else {
+        showToast("قيمة غير صالحة!");
+      }
+    }
+  }
+
+  function saveAccountChanges() {
+    appState.parentName = document.getElementById('accountParentNameInput').value;
+    appState.email = document.getElementById('accountEmailInput').value;
+    
+    localStorage.setItem('mido_parentName', appState.parentName);
+    localStorage.setItem('mido_email', appState.email);
+    updateUIState();
+    showToast("تم تحديث وحفظ بيانات الحساب بنجاح!");
+  }
+
+  function handleLogout() {
+    showToast("تم تسجيل الخروج بنجاح.");
+    switchView('onboarding');
+  }
+
+  function startNewRegistration() {
+    document.getElementById('step-welcome').classList.remove('active-step');
+    document.getElementById('wizardProgressContainer').style.display = 'block';
+    document.getElementById('wizardFooter').style.display = 'flex';
+    showStep(1);
+  }
+
+  function goToLogin() {
+    document.getElementById('step-welcome').classList.remove('active-step');
+    document.getElementById('step-login').classList.add('active-step');
+  }
+
+  function resetToWelcome() {
+    document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active-step'));
+    document.getElementById('step-welcome').classList.add('active-step');
+    document.getElementById('wizardProgressContainer').style.display = 'none';
+    document.getElementById('wizardFooter').style.display = 'none';
+    currentStep = 1;
+  }
+
+  function showStep(step) {
+    document.querySelectorAll('.step-content').forEach(el => {
+      if(el.id.startsWith('step-') && el.id !== 'step-welcome' && el.id !== 'step-login') {
+        el.classList.remove('active-step');
+      }
+    });
+    const target = document.getElementById('step-' + step);
+    if(target) target.classList.add('active-step');
+    
+    document.getElementById('wizardProgress').style.width = ((step / totalSteps) * 100) + '%';
+    document.getElementById('nextBtn').innerText = (step === totalSteps) ? 'إتمام التسجيل 🚀' : 'التالي ←';
+  }
+
+  function nextStep(direction) {
+    if (direction === 1) {
+      if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+      } else {
+        const cName = document.getElementById('regChildName').value;
+        const cAge = document.getElementById('regChildAge').value;
+        const pName = document.getElementById('regParentName').value;
+        const pEmail = document.getElementById('regParentEmail').value;
+
+        if(cName) appState.childName = cName;
+        if(cAge) appState.childAge = cAge;
+        if(pName) appState.parentName = pName;
+        if(pEmail) appState.email = pEmail;
+
+        localStorage.setItem('mido_childName', appState.childName);
+        localStorage.setItem('mido_childAge', appState.childAge);
+        localStorage.setItem('mido_parentName', appState.parentName);
+        localStorage.setItem('mido_email', appState.email);
+
+        updateUIState();
+        showToast('تم إتمام التسجيل بنجاح! انتقل الآن لصفحة الدفع.');
+        switchView('checkout');
+      }
+    } else if (direction === -1) {
+      if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+      } else {
+        resetToWelcome();
+      }
+    }
+  }
+
+  function selectOption(element, groupName, value) {
+    element.parentElement.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
+    element.classList.add('selected');
+    if(groupName === 'goal') {
+      appState.selectedGoal = value;
+    } else if(groupName === 'location') {
+      appState.selectedLocation = value;
+    }
+  }
+
+  function handleLogin() {
+    const email = document.getElementById('loginEmail').value;
+    if(!email) {
+      showToast('يرجى إدخال البريد الإلكتروني');
+      return;
+    }
+    appState.email = email;
+    updateUIState();
+    showToast('تم تسجيل الدخول بنجاح!');
+    switchView('parent');
+  }
+
+  function changeVideo(videoId, title) {
+    document.getElementById('courseVideoPlayer').src = 'https://www.youtube.com/embed/' + videoId;
+    document.getElementById('videoTitle').innerText = title;
+  }
+
+  function toggleAccordion(btn) {
+    const item = btn.closest('.accordion-item');
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }
+
+  function checkQuiz(isCorrect, btn) {
+    if(isCorrect) {
+      btn.style.background = 'var(--quran-green)';
+      btn.style.color = '#fff';
+      appState.xpPoints += 25;
+      localStorage.setItem('mido_xp', appState.xpPoints);
+      updateUIState();
+      showToast('🎉 إجابة صحيحة يا بطل! تم إضافة +25 XP.');
+    } else {
+      btn.style.background = '#DC2626';
+      btn.style.color = '#fff';
+      showToast('❌ حاول مرة أخرى يا بطل!');
+    }
+  }
+
+  function playAudioRep(text) {
+    showToast('🔊 جاري تشغيل التمرين الصوتي: ' + text);
+  }
+
+  function openAdminPortal() {
+    const pass = prompt("أدخل رمز المرور السري للإدارة:");
+    if (pass === "1234") {
+      switchView('admin');
+    } else if (pass !== null) {
+      showToast("رمز المرور غير صحيح!");
+    }
+  }
+
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.append('click', () => {}, {once:true}); // handled below correctly
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if(!wasOpen) item.classList.add('open');
+    });
+  });
+
+  const toggle = document.querySelector('.menu-toggle');
+  const links = document.querySelector('.nav-links');
+  if(toggle && links) {
+    toggle.addEventListener('click', () => {
+      const isOpen = links.style.display === 'flex';
+      links.style.display = isOpen ? 'none' : 'flex';
+      links.style.flexDirection = 'column';
+      links.style.position = 'absolute';
+      links.style.top = '65px';
+      links.style.right = '0';
+      links.style.left = '0';
+      links.style.background = 'var(--paper-card)';
+      links.style.padding = '20px 24px';
+      links.style.gap = '14px';
+      links.style.borderBottom = '1px solid var(--border-color)';
+      links.style.zIndex = '999';
+    });
+  }
+</script>
+
+</body>
+</html>
